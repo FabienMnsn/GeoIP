@@ -24,6 +24,7 @@ IP:[192.134.1.25], HostName:[fr-par-as2486.anchors.atlas.ripe.net], Guessed at [
 IP:[85.73.227.34], HostName:[UNKNOWN], Guessed at [UNKNOWN]
 IP:[80.151.47.102], HostName:[access.abrm.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 2.3784882768418822]
 IP:[91.215.118.126], HostName:[atlas-probe-01.dasburo.com], Guessed at [UNKNOWN]
+IP:[37.143.141.141], HostName:[atlas.datacenta.net], Guessed in Central African Republic => INSUFFICIENT ACCURACY : Only 44.44444444444444% probability]
 IP:[91.61.83.145], HostName:[p5b3d5391.dip0.t-ipconnect.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 1.0392432240418854]
 IP:[195.200.254.62], HostName:[UNKNOWN], Guessed at [UNKNOWN]
 IP:[85.185.93.118], HostName:[UNKNOWN], Guessed at [UNKNOWN]
@@ -38,6 +39,7 @@ IP:[87.140.57.181], HostName:[banal.trillke.net], Guessed at [UNKNOWN]
 IP:[192.248.1.187], HostName:[UNKNOWN], Guessed at [UNKNOWN]
 IP:[93.201.110.241], HostName:[p5dc96ef1.dip0.t-ipconnect.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 6.176905759441876]
 IP:[217.252.141.6], HostName:[pd9fc8d06.dip0.t-ipconnect.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 5.210636156941885]
+IP:[37.49.234.132], HostName:[ripe-atlas-anchor.franceix.net], Guessed in France at [(46.603354, 1.8883335)], API verification:[score: 2.655028616019117]
 IP:[217.31.202.20], HostName:[atlas-anchors.nic.cz], Guessed in Czechia at [(49.8167003, 15.4749544)], API verification:[score: 0.5729509568997246]
 IP:[93.240.120.143], HostName:[dtag.nbiserv.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 1.5926898027418832]
 IP:[87.140.36.204], HostName:[p578c24cc.dip0.t-ipconnect.de], Guessed in Germany at [(51.0834196, 10.4234469)], API verification:[score: 4.852895559241886]
@@ -100,5 +102,5 @@ IP:[193.159.132.232], HostName:[pc19f84e8.dip0.t-ipconnect.de], Guessed in Germa
 ###########################################################
 Total IP location found : 65
 Total host not responding : 12
-Total location not found : 23
+Total location not found : 23 including 1 with insufficient location information
 ###########################################################

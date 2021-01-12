@@ -81,6 +81,7 @@ def readHostName(ip_host_file, write_log):
 	# stat counter
 	unknown_host = 0
 	unknown_location = 0
+	insufficient_location_info = 0
 	tt = 0
 	for line in Lines:
 		line_splited = line.split(';')
@@ -92,13 +93,19 @@ def readHostName(ip_host_file, write_log):
 			res = deepAnalyze2(host_name, A2)
 			if(res != {}):
 				for key in res:
-					if(res[key] > 75.0):
+					if(res[key] >= 75.0):
 						location = geoCoding(A2[key])
 						score = verifyAdressWithAPI(ip, location)
 						if(write_log):
 							to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} at [{location[0], location[1]}], API verification:[{score}]\n"
 							out.write(to_write)
 						print(f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} at [{location[0], location[1]}], API verification:[{score}]")
+					else:
+						insufficient_location_info +=1
+						if(write_log):
+							to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT ACCURACY : Only {res[key]}% probability]\n"
+							out.write(to_write)
+						print(f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT ACCURACY : Only {res[key]}% probability]")
 			else:
 				if(write_log):
 					to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed at [UNKNOWN]\n"
@@ -109,9 +116,9 @@ def readHostName(ip_host_file, write_log):
 			out.write(f"IP:[{ip}], HostName:[UNKNOWN], Guessed at [UNKNOWN]\n")
 			unknown_host += 1
 		tt += 1
-	f"\n###########################################################\nTotal IP location found : {tt-unknown_host-unknown_location}\nTotal host not responding : {unknown_host}\nTotal location not found : {unknown_location}\n###########################################################"
+	print((f"\n###########################################################\nTotal IP location found : {tt-unknown_host-unknown_location}\nTotal host not responding : {unknown_host}\nTotal location not found : {unknown_location} including {insufficient_location_info} with insufficient location information\n###########################################################"))
 	if(write_log):
-		out.write(f"\n###########################################################\nTotal IP location found : {tt-unknown_host-unknown_location}\nTotal host not responding : {unknown_host}\nTotal location not found : {unknown_location}\n###########################################################")
+		out.write(f"\n###########################################################\nTotal IP location found : {tt-unknown_host-unknown_location}\nTotal host not responding : {unknown_host}\nTotal location not found : {unknown_location} including {insufficient_location_info} with insufficient location information\n###########################################################")
 		out.close()
 
 
@@ -252,7 +259,7 @@ def matchCountryCode(input_dict, host_name_part, country_code_dict):
 	@description
 	- Finds if a country code is matching the host_name_part, if yes then adds it to input_dict
 	@return
-	- The matching country code
+	- The matching country code or empty if no match
 	"""
 	if(len(host_name_part) > 2):
 		return -1
@@ -278,7 +285,7 @@ def matchCountryName(input_dict, host_name_part, country_code_dict):
 	- Find if a country name match at least 3 letter of a country name return a dict {country_name:matched_score}
 	  matched_score is calculated based on how many letters are matched in the hole host_name_part (in %)
 	@return
-	- The new dict
+	- The input dictionary
 	"""
 	res = {}
 	for code in country_code_dict:
@@ -384,7 +391,7 @@ def getWriteCityByCountryByChunks(country_code_dict, output_file):
 	  We need the log file because the web page only allow a few data before resetting the connection so basically we retrieve as much data as possible before the connection is reset.
 	  Files are openned in "a" append mode to add at the end of them.
 	@return
-	- Nothing
+	- A list of cities of a country
 	"""
 	# reading exixting log
 	log = open("log.txt", "r", encoding="utf-8")
@@ -431,7 +438,6 @@ def getCityFromHTML(url):
 				# appends the second which doesnt contain any accent => simpler to match in the futur
 				cities.append(city_name)
 				cpt = 0
-	print("     Found", len(cities), "cities")
 	return cities
 
 
@@ -563,40 +569,30 @@ if __name__ == '__main__':
 	#getHostList("netmetIPlist.txt")
 	#readHostName("netmetIPhost.txt")
 	#geoCoding("Brazil")
-	
 	#print(containsNumerics("Acoute-villier"))
 	#print(containsNumerics("Acoute-Vidas 4564 89"))
-
 	#getCityFromHTML("https://service.unece.org/trade/locode/fr.htm")
 	# https://unece.org/cefact/unlocode-code-list-country-and-territory
-
 	#print(a2)
 	#a2 = loadCountryCodes("countryData.txt")
 	#writeDictCSV(a2, "CountryCodes.txt")
 	#a = {"AF":["aa", "bbb", "ccc"], "FR":["ddd", "eee", "fff"]}
 	#writeDictCSV(a, "TEMP.txt")
-	
 	#writeDictCSV(cCities, "CountryCIties.txt")
 	#print(listToWritableCSV(['zzz', 'dhzqjkd']))
-
 	#a2 = loadCountryCodes("countryData.txt")
 	#cCities = getWriteCityByCountryByChunks(a2, "CountryCities.txt")
-
 	#CC = loadCityDict("CountryCities.txt")
 	#print(CC['CZ'])
 	#print(findCityInHost(CC, "host-195-16-81-5.leipziger-messe.de", "DE"))
 	#print(findCityInHost(CC, "atlas-anchors.nic.cz", "CZ"))
 	#print(findCityInHost(CC, "pcisrv.consultik.qc.ca", "CA"))
-
 	#verifyAdressWithAPI("195.16.81.5", (-50.4,32.78))
-
 	#print(deepAnalyze("ripe-atlas-anchor.franceix.net"))
-
-	readHostName("netmetIPhost.txt", True)
-
+	#readHostName("netmetIPhost.txt", True)
 	#A2 = loadCountryCodes("CountryCodes.txt")
 	#print(matchCountryName({}, "franceix", A2))
-
 	#print(matchCountryCode({}, "de", A2))
-
 	#print("D2:", deepAnalyze2("ripe-atlas-anchor.franceix.net"))
+
+	readHostName("netmetIPhost.txt", True)
