@@ -552,9 +552,25 @@ def verifyAdressWithAPI(ip_address, location):
 
 
 
+def printDict(input_dict):
+	"""
+	@param
+	- input dict : {var:var}
+	@description
+	- Prints the dictionary givent in parameter as one line for each key
+	@return
+	- Nothing, it's just a print bro
+	"""
+	print("{")
+	for k in input_dict.keys():
+		print(f"\t'{k}' : {input_dict[k]}")
+	print("}")
+
+
+
 
 if __name__ == '__main__':
-	print(sys.version)
+	#print(sys.version)
 	#getHostList("netmetIPlist.txt")
 	#a2 = loadCountryCodes("countryCode.txt")
 	#print(deepAnalyze("p5483cdfd.dip0.t-ipconnect.de"))
@@ -590,9 +606,10 @@ if __name__ == '__main__':
 	#verifyAdressWithAPI("195.16.81.5", (-50.4,32.78))
 	#print(deepAnalyze("ripe-atlas-anchor.franceix.net"))
 	#readHostName("netmetIPhost.txt", True)
-	#A2 = loadCountryCodes("CountryCodes.txt")
+	A2 = loadCountryCodes("CountryCodes.txt")
+	printDict(A2)
 	#print(matchCountryName({}, "franceix", A2))
 	#print(matchCountryCode({}, "de", A2))
 	#print("D2:", deepAnalyze2("ripe-atlas-anchor.franceix.net"))
 
-	readHostName("netmetIPhost.txt", True)
+	#readHostName("netmetIPhost.txt", True)
