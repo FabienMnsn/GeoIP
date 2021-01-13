@@ -57,14 +57,14 @@ def getHost(ip):
 
 
 
-
+##########################################
 def readHostName(ip_host_file, write_log):
 	"""
 	@param
 	- ip_host_file : str => file name as string
 	- write_log : boolean => used to select if terminal output is writtent to txt file
 	@description
-	- Reads the file containing <IP;hostname> and extract the hostname for further analysis. Can write output to txt file
+	- Reads the file containing <IP;hostname> and extract the hostname for further analysis. Can write output to txt file? Writes IP/location match in a json file (only IP with correct location guess)
 	@return
 	- Nothing
 	"""
@@ -74,7 +74,9 @@ def readHostName(ip_host_file, write_log):
 	if(write_log):
 		dt = str(datetime.datetime.now()).split( )[0]	
 		out = open("GeoIP"+dt+".txt", "w", buffering=1, encoding="utf-8")
-
+	# json file to write only the matching IP/location others a written to log file only
+	json_out = open("GeoIP"+dt+".json", "w", buffering=1, encoding="utf-8")
+	json_out.write("{\n")
 	# load country cities dict
 	CC = loadCityDict("CountryCities.txt")
 	A2 = loadCountryCodes("CountryCodes.txt")
@@ -100,12 +102,13 @@ def readHostName(ip_host_file, write_log):
 							to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} at [{location[0], location[1]}], API verification:[{score}]\n"
 							out.write(to_write)
 						print(f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} at [{location[0], location[1]}], API verification:[{score}]")
+						writeToJSON(json_out, ip, location)
 					else:
 						insufficient_location_info +=1
 						if(write_log):
-							to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT ACCURACY : Only {res[key]}% probability]\n"
+							to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT GUESS ACCURACY : Only {res[key]}% probability]\n"
 							out.write(to_write)
-						print(f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT ACCURACY : Only {res[key]}% probability]")
+						print(f"IP:[{ip}], HostName:[{host_name}], Guessed in {A2[key]} => INSUFFICIENT GUESS ACCURACY : Only {res[key]}% probability]")
 			else:
 				if(write_log):
 					to_write = f"IP:[{ip}], HostName:[{host_name}], Guessed at [UNKNOWN]\n"
@@ -120,6 +123,8 @@ def readHostName(ip_host_file, write_log):
 	if(write_log):
 		out.write(f"\n###########################################################\nTotal IP location found : {tt-unknown_host-unknown_location}\nTotal host not responding : {unknown_host}\nTotal location not found : {unknown_location} including {insufficient_location_info} with insufficient location information\n###########################################################")
 		out.close()
+	json_out.write("}")
+	json_out.close()
 
 
 
@@ -569,6 +574,26 @@ def printDict(input_dict):
 
 
 
+def writeToJSON(opened_file_descriptor, ip, location):
+	"""
+	@param
+	- opened_file_descriptor : file object => pointer to the file descriptor
+	- ip : str => the ip adress as a string
+	- location : (float, float) => latitude and longitude as a tuple
+	@description
+	- Writes the data into a file in json format
+	@return
+	- Nothing
+	"""
+	if(location == None):
+		return
+	else:
+		opened_file_descriptor.write(f'  "{ip}": [\n\t{location[0]},\n\t{location[1]}\n  ],\n')
+	return
+
+
+
+
 if __name__ == '__main__':
 	#print(sys.version)
 	#getHostList("netmetIPlist.txt")
@@ -606,10 +631,10 @@ if __name__ == '__main__':
 	#verifyAdressWithAPI("195.16.81.5", (-50.4,32.78))
 	#print(deepAnalyze("ripe-atlas-anchor.franceix.net"))
 	#readHostName("netmetIPhost.txt", True)
-	A2 = loadCountryCodes("CountryCodes.txt")
-	printDict(A2)
+	#A2 = loadCountryCodes("CountryCodes.txt")
+	#printDict(A2)
 	#print(matchCountryName({}, "franceix", A2))
 	#print(matchCountryCode({}, "de", A2))
 	#print("D2:", deepAnalyze2("ripe-atlas-anchor.franceix.net"))
 
-	#readHostName("netmetIPhost.txt", True)
+	readHostName("netmetIPhost.txt", True)
